@@ -172,7 +172,7 @@
         }
 
         .card-description {
-            color: #ccc;
+            color: #fff;
             line-height: 1.6;
             margin-bottom: 1.5rem;
         }
@@ -356,7 +356,7 @@
         .close-btn {
             background: none;
             border: none;
-            color: #ccc;
+            color: #fff;
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0.5rem;
@@ -391,7 +391,7 @@
 
         .form-group label {
             display: block;
-            color: #ccc;
+            color: #fff;
             margin-bottom: 0.5rem;
             font-weight: 500;
         }
@@ -440,7 +440,7 @@
 
         .btn-secondary {
             background: rgba(255, 255, 255, 0.1);
-            color: #ccc;
+            color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
@@ -457,7 +457,7 @@
         }
 
         .security-info p {
-            color: #ccc;
+            color: #fff;
             margin-bottom: 0.5rem;
         }
 
@@ -473,7 +473,7 @@
         }
 
         .pin-section p {
-            color: #ccc;
+            color: #fff;
             margin-bottom: 1rem;
         }
 
@@ -505,7 +505,7 @@
 
         .back-btn {
             background: rgba(255, 255, 255, 0.1);
-            color: #ccc;
+            color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
@@ -649,7 +649,7 @@
         }
 
         .game-card p {
-            color: #ccc;
+            color: #fff;
             font-size: 0.8rem;
             margin: 0;
         }
@@ -798,7 +798,7 @@
         .tab-btn {
             background: none;
             border: none;
-            color: #ccc;
+            color: #fff;
             padding: 1rem 1.5rem;
             cursor: pointer;
             border-bottom: 2px solid transparent;
@@ -997,7 +997,7 @@
         .key-btn {
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ccc;
+            color: #fff;
             padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
@@ -1051,7 +1051,7 @@
         }
 
         .key-combo span {
-            color: #ccc;
+            color: #fff;
             font-weight: bold;
         }
 
@@ -1757,24 +1757,23 @@
             const cloakEnabled = localStorage.getItem('cloakEnabled') === 'true';
             
             if (cloakEnabled && cloakUrl) {
-                // Change the page title and URL in history
-                document.title = 'Loading...';
-                
-                // Create a fake URL that looks like the cloaked site
-                const fakeUrl = cloakUrl;
-                
-                // Update the browser history
-                if (history.replaceState) {
-                    history.replaceState(null, null, fakeUrl);
+                try {
+                    // Change the page title
+                    document.title = 'Google Classroom';
+                    
+                    // Change the favicon
+                    const favicon = document.querySelector('link[rel="icon"]') || document.createElement('link');
+                    favicon.rel = 'icon';
+                    favicon.href = 'https://ssl.gstatic.com/classroom/favicon.png';
+                    if (!document.querySelector('link[rel="icon"]')) {
+                        document.head.appendChild(favicon);
+                    }
+                    
+                    showNotification('Cloak applied! (Title and icon changed)', 'success');
+                } catch (error) {
+                    console.error('Error applying cloak:', error);
+                    showNotification('Error applying cloak: ' + error.message, 'error');
                 }
-                
-                // Change the page title to match the cloaked site
-                setTimeout(() => {
-                    const siteName = new URL(cloakUrl).hostname;
-                    document.title = siteName.charAt(0).toUpperCase() + siteName.slice(1);
-                }, 1000);
-                
-                showNotification('Site cloaked successfully!', 'success');
             }
         }
 
@@ -1897,7 +1896,7 @@
 
             // Listen for shortcut execution
             document.addEventListener('keydown', function(e) {
-                const pressedCombo = getPressedCombo();
+                const pressedCombo = getPressedCombo(e);
                 
                 // Check each slot for matching key combination
                 Object.keys(keyBindings).forEach(slot => {
@@ -1912,7 +1911,7 @@
             });
         });
 
-        function getPressedCombo() {
+        function getPressedCombo(e) {
             const combo = [];
             if (e.ctrlKey) combo.push('Control');
             if (e.shiftKey) combo.push('Shift');
@@ -1975,7 +1974,10 @@
             if (cloakUrl) {
                 document.getElementById('cloak-url').value = cloakUrl;
             }
-            document.getElementById('cloak-enabled').checked = cloakEnabled;
+            const cloakEnabledElement = document.getElementById('cloak-enabled');
+            if (cloakEnabledElement) {
+                cloakEnabledElement.checked = cloakEnabled;
+            }
 
             // Load mask settings
             const maskTitle = localStorage.getItem('maskTitle');
@@ -1987,11 +1989,17 @@
             if (maskIcon) {
                 document.getElementById('mask-icon').value = maskIcon;
             }
-            document.getElementById('mask-enabled').checked = maskEnabled;
+            const maskEnabledElement = document.getElementById('mask-enabled');
+            if (maskEnabledElement) {
+                maskEnabledElement.checked = maskEnabled;
+            }
 
             // Load background effects setting
             const backgroundEffects = localStorage.getItem('backgroundEffects') !== 'false';
-            document.getElementById('background-effects').checked = backgroundEffects;
+            const backgroundEffectsElement = document.getElementById('background-effects');
+            if (backgroundEffectsElement) {
+                backgroundEffectsElement.checked = backgroundEffects;
+            }
 
             // Load custom theme
             const customTheme = localStorage.getItem('customTheme');
