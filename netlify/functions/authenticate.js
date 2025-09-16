@@ -31,7 +31,51 @@ exports.handler = async (event, context) => {
         if (action === 'login') {
             console.log('Attempting login for username:', username);
             
-            // First try hardcoded credentials for immediate functionality
+            // Try database first for all accounts
+            try {
+                console.log('Trying database authentication...');
+                const { data: user, error } = await supabase
+                    .from('users')
+                    .select('id, username, password, role, is_active')
+                    .eq('username', username)
+                    .eq('is_active', true)
+                    .single();
+
+                console.log('Database query result:', { user, error });
+
+                if (!error && user) {
+                    // Check password (in production, you should hash passwords)
+                    if (user.password === password) {
+                        console.log('Login successful (database) for user:', username, 'role:', user.role);
+                        
+                        // Generate session ID
+                        const sessionId = 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+                        
+                        return {
+                            statusCode: 200,
+                            headers,
+                            body: JSON.stringify({
+                                success: true,
+                                role: user.role,
+                                sessionId: sessionId,
+                                message: 'Login successful'
+                            })
+                        };
+                    } else {
+                        console.log('Password mismatch for user:', username);
+                        return {
+                            statusCode: 401,
+                            headers,
+                            body: JSON.stringify({ success: false, message: 'Invalid username or password' })
+                        };
+                    }
+                }
+            } catch (dbError) {
+                console.error('Database connection error:', dbError);
+            }
+            
+            // Fallback to hardcoded credentials if database fails or user not found
+            console.log('Falling back to hardcoded credentials...');
             if ((username === 'GregEllicott' && password === '111010') || 
                 (username === 'TestingAccount' && password === 'Test12') ||
                 (username === 'HurleyV' && password === 'password')) {
@@ -48,74 +92,17 @@ exports.handler = async (event, context) => {
                         success: true,
                         role: role,
                         sessionId: sessionId,
-                        message: 'Login successful'
+                        message: 'Login successful (fallback)'
                     })
                 };
             }
             
-            // If hardcoded credentials don't match, try database
-            try {
-                console.log('Trying database authentication...');
-                const { data: user, error } = await supabase
-                    .from('users')
-                    .select('id, username, password, role, is_active')
-                    .eq('username', username)
-                    .eq('is_active', true)
-                    .single();
-
-                console.log('Database query result:', { user, error });
-
-                if (error) {
-                    console.log('Database error:', error);
-                    return {
-                        statusCode: 401,
-                        headers,
-                        body: JSON.stringify({ success: false, message: 'Database error: ' + error.message })
-                    };
-                }
-
-                if (!user) {
-                    console.log('No user found with username:', username);
-                    return {
-                        statusCode: 401,
-                        headers,
-                        body: JSON.stringify({ success: false, message: 'Invalid username or password' })
-                    };
-                }
-
-                // Check password (in production, you should hash passwords)
-                if (user.password !== password) {
-                    console.log('Password mismatch for user:', username);
-                    return {
-                        statusCode: 401,
-                        headers,
-                        body: JSON.stringify({ success: false, message: 'Invalid username or password' })
-                    };
-                }
-
-                console.log('Login successful (database) for user:', username, 'role:', user.role);
-
-                // Generate session ID
-                const sessionId = 'sess_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-                
-                return {
-                    statusCode: 200,
-                    headers,
-                    body: JSON.stringify({
-                        success: true,
-                        role: user.role,
-                        sessionId: sessionId,
-                        message: 'Login successful'
-                    })
-                };
-            } catch (dbError) {
-                console.error('Database connection error:', dbError);
-                return {
-                    statusCode: 401,
-                    headers,
-                    body: JSON.stringify({ success: false, message: 'Invalid username or password' })
-                };
-            }
+            // If neither database nor hardcoded credentials work
+            return {
+                statusCode: 401,
+                headers,
+                body: JSON.stringify({ success: false, message: 'Invalid username or password' })
+            };
         }
 
         return {

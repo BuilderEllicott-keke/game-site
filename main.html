@@ -1606,7 +1606,28 @@
         function openGame(gameName, gamePath) {
             document.getElementById('game-loader').style.display = 'flex';
             document.getElementById('game-frame').src = `games/${gamePath}/index.html`;
-            document.title = `${gameName} - GE Sites`;
+            
+            // Store original title and set cloaked title
+            const originalTitle = document.title;
+            document.title = 'Google Classroom';
+            
+            // Monitor for title changes and revert them
+            const titleObserver = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.type === 'childList' && mutation.target === document.head) {
+                        // Check if title was changed by the game
+                        if (document.title !== 'Google Classroom' && document.title !== originalTitle) {
+                            document.title = 'Google Classroom';
+                        }
+                    }
+                });
+            });
+            
+            // Start observing
+            titleObserver.observe(document.head, { childList: true, subtree: true });
+            
+            // Store observer for cleanup
+            window.titleObserver = titleObserver;
             
             // Load saved audio settings for this game
             loadGameAudioSettings(gameName);
@@ -1683,6 +1704,12 @@
             document.getElementById('game-loader').style.display = 'none';
             document.getElementById('game-frame').src = '';
             document.title = 'Main Portal - GE Sites';
+            
+            // Clean up title observer
+            if (window.titleObserver) {
+                window.titleObserver.disconnect();
+                window.titleObserver = null;
+            }
         }
 
         function refreshGame() {
