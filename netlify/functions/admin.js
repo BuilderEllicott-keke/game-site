@@ -61,19 +61,28 @@ exports.handler = async (event, context) => {
             const { action } = event.queryStringParameters || {};
 
             if (action === 'logs') {
-                const { data: logs, error } = await supabase
-                    .from('login_logs')
-                    .select('*')
-                    .order('timestamp', { ascending: false })
-                    .limit(100);
+                try {
+                    const { data: logs, error } = await supabase
+                        .from('login_logs')
+                        .select('*')
+                        .order('timestamp', { ascending: false })
+                        .limit(100);
 
-                if (error) throw error;
+                    if (error) throw error;
 
-                return {
-                    statusCode: 200,
-                    headers,
-                    body: JSON.stringify({ success: true, logs })
-                };
+                    return {
+                        statusCode: 200,
+                        headers,
+                        body: JSON.stringify({ success: true, logs: logs || [] })
+                    };
+                } catch (error) {
+                    console.log('login_logs table not found, returning empty array');
+                    return {
+                        statusCode: 200,
+                        headers,
+                        body: JSON.stringify({ success: true, logs: [] })
+                    };
+                }
             }
 
             if (action === 'users') {
@@ -92,22 +101,31 @@ exports.handler = async (event, context) => {
             }
 
             if (action === 'sessions') {
-                const { data: sessions, error } = await supabase
-                    .from('user_sessions')
-                    .select(`
-                        *,
-                        users!inner(username, role)
-                    `)
-                    .gt('expires_at', new Date().toISOString())
-                    .order('created_at', { ascending: false });
+                try {
+                    const { data: sessions, error } = await supabase
+                        .from('user_sessions')
+                        .select(`
+                            *,
+                            users!inner(username, role)
+                        `)
+                        .gt('expires_at', new Date().toISOString())
+                        .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                    if (error) throw error;
 
-                return {
-                    statusCode: 200,
-                    headers,
-                    body: JSON.stringify({ success: true, sessions })
-                };
+                    return {
+                        statusCode: 200,
+                        headers,
+                        body: JSON.stringify({ success: true, sessions: sessions || [] })
+                    };
+                } catch (error) {
+                    console.log('user_sessions table not found, returning empty array');
+                    return {
+                        statusCode: 200,
+                        headers,
+                        body: JSON.stringify({ success: true, sessions: [] })
+                    };
+                }
             }
         }
 

@@ -413,7 +413,7 @@
         }
 
         .form-group input::placeholder {
-            color: #888;
+            color: #fff;
         }
 
         .btn-primary, .btn-secondary {
@@ -552,7 +552,7 @@
         }
 
         .game-search::placeholder {
-            color: #888;
+            color: #fff;
         }
 
         .search-icon {
@@ -560,7 +560,7 @@
             left: 0.75rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #888;
+            color: #fff;
         }
 
         .game-sort {
@@ -892,7 +892,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: #ccc;
+            background-color: #fff;
             transition: .4s;
             border-radius: 24px;
         }
@@ -1613,36 +1613,45 @@
         }
 
         function loadGameAudioSettings(gameName) {
-            const savedSettings = localStorage.getItem(`game_audio_${gameName}`);
-            if (savedSettings) {
-                const settings = JSON.parse(savedSettings);
-                document.getElementById('game-volume').value = settings.volume || 50;
-                document.getElementById('volume-display').textContent = `${settings.volume || 50}%`;
-                
+            // Wait for elements to be available
+            setTimeout(() => {
+                const volumeSlider = document.getElementById('game-volume');
+                const volumeDisplay = document.getElementById('volume-display');
                 const muteBtn = document.querySelector('.mute-btn');
-                if (settings.muted) {
-                    muteBtn.classList.add('muted');
-                    muteBtn.querySelector('i').className = 'fas fa-volume-mute';
-                } else {
-                    muteBtn.classList.remove('muted');
-                    muteBtn.querySelector('i').className = 'fas fa-volume-up';
+                
+                if (!volumeSlider || !volumeDisplay || !muteBtn) {
+                    console.log('Audio controls not found, retrying...');
+                    loadGameAudioSettings(gameName);
+                    return;
                 }
-            }
-            
-            // Add event listeners
-            const volumeSlider = document.getElementById('game-volume');
-            const muteBtn = document.querySelector('.mute-btn');
-            
-            volumeSlider.addEventListener('input', function() {
-                const volume = this.value;
-                document.getElementById('volume-display').textContent = `${volume}%`;
-                saveGameAudioSettings(gameName);
-            });
-            
-            muteBtn.addEventListener('click', function() {
-                toggleGameMute();
-                saveGameAudioSettings(gameName);
-            });
+                
+                const savedSettings = localStorage.getItem(`game_audio_${gameName}`);
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    volumeSlider.value = settings.volume || 50;
+                    volumeDisplay.textContent = `${settings.volume || 50}%`;
+                    
+                    if (settings.muted) {
+                        muteBtn.classList.add('muted');
+                        muteBtn.querySelector('i').className = 'fas fa-volume-mute';
+                    } else {
+                        muteBtn.classList.remove('muted');
+                        muteBtn.querySelector('i').className = 'fas fa-volume-up';
+                    }
+                }
+                
+                // Add event listeners
+                volumeSlider.addEventListener('input', function() {
+                    const volume = this.value;
+                    volumeDisplay.textContent = `${volume}%`;
+                    saveGameAudioSettings(gameName);
+                });
+                
+                muteBtn.addEventListener('click', function() {
+                    toggleGameMute();
+                    saveGameAudioSettings(gameName);
+                });
+            }, 100);
         }
 
         function toggleGameMute() {
@@ -2001,16 +2010,12 @@
                 backgroundEffectsElement.checked = backgroundEffects;
             }
 
-            // Load custom theme
-            const customTheme = localStorage.getItem('customTheme');
-            if (customTheme) {
-                const colors = JSON.parse(customTheme);
-                document.getElementById('bg-color').value = colors.bg || '#1a1a1a';
-                document.getElementById('card-color').value = colors.card || '#1e1e1e';
-                document.getElementById('accent-color').value = colors.accent || '#667eea';
-                document.getElementById('text-color').value = colors.text || '#ffffff';
-                document.getElementById('secondary-text').value = colors.secondary || '#cccccc';
-            }
+            // Load custom theme (appearance tab removed, so skip this)
+            // const customTheme = localStorage.getItem('customTheme');
+            // if (customTheme) {
+            //     const colors = JSON.parse(customTheme);
+            //     // These elements no longer exist since appearance tab was removed
+            // }
         }
 
         function closeSettings() {
