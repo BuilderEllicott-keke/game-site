@@ -96,40 +96,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Simulate a small delay for better UX
         setTimeout(() => {
-            // Mock authentication system
-            const mockUsers = [
-                { username: 'admin', password: 'admin123', role: 'admin', email: 'admin@gesites.com' },
-                { username: 'user', password: 'user123', role: 'user', email: 'user@gesites.com' },
-                { username: 'test', password: 'test123', role: 'user', email: 'test@gesites.com' }
-            ];
-
-            const user = mockUsers.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                showSuccess('Login successful! Redirecting...');
-                
-                // Generate a mock session ID
-                const sessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
-                
-                // Store session data
-                localStorage.setItem('sessionId', sessionId);
-                localStorage.setItem('userRole', user.role);
-                localStorage.setItem('username', username);
-                localStorage.setItem('userEmail', user.email);
-                
-                // Redirect after a short delay
-                setTimeout(() => {
-                    if (user.role === 'admin') {
-                        window.location.href = 'admin-dashboard.html';
-                    } else {
-                        window.location.href = 'main.html';
-                    }
-                }, 1500);
-            } else {
-                showError('Invalid username or password');
-            }
-            
-            setLoading(false);
+            fetch('/.netlify/functions/authenticate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    username, 
+                    password,
+                    action: 'login'
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showSuccess('Login successful! Redirecting...');
+                    
+                    // Store session data
+                    localStorage.setItem('sessionId', data.sessionId);
+                    localStorage.setItem('userRole', data.role);
+                    localStorage.setItem('username', username);
+                    
+                    // Redirect after a short delay
+                    setTimeout(() => {
+                        if (data.role === 'admin') {
+                            window.location.href = 'admin-dashboard.html';
+                        } else {
+                            window.location.href = 'main.html';
+                        }
+                    }, 1500);
+                } else {
+                    showError(data.message || 'Invalid username or password');
+                }
+            })
+            .catch(error => {
+                console.error('Login error:', error);
+                showError('Login failed. Please try again.');
+            })
+            .finally(() => {
+                setLoading(false);
+            });
         }, 500);
     });
 
