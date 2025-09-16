@@ -10,14 +10,76 @@
     <style>
         .main-container {
             min-height: 100vh;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #1a1a1a;
             padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+            animation: backgroundShift 20s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) translateX(0px);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+            25% { transform: translateX(-20px) translateY(-10px) rotate(1deg); }
+            50% { transform: translateX(20px) translateY(10px) rotate(-1deg); }
+            75% { transform: translateX(-10px) translateY(20px) rotate(0.5deg); }
         }
 
         .main-header {
             text-align: center;
             margin-bottom: 3rem;
             color: white;
+            position: relative;
+            z-index: 2;
         }
 
         .main-logo {
@@ -51,20 +113,24 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 2rem;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
         .dashboard-card {
-            background: white;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
+            backdrop-filter: blur(10px);
         }
 
         .dashboard-card::before {
@@ -101,12 +167,12 @@
         .card-title {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #333;
+            color: #fff;
             margin-bottom: 1rem;
         }
 
         .card-description {
-            color: #666;
+            color: #ccc;
             line-height: 1.6;
             margin-bottom: 1.5rem;
         }
@@ -136,6 +202,8 @@
             margin-bottom: 2rem;
             color: white;
             text-align: center;
+            position: relative;
+            z-index: 2;
         }
 
         .user-avatar {
@@ -186,6 +254,8 @@
             padding: 2rem;
             margin-bottom: 2rem;
             color: white;
+            position: relative;
+            z-index: 2;
         }
 
         .stats-grid {
@@ -216,6 +286,8 @@
             justify-content: center;
             margin-top: 2rem;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
         }
 
         .quick-action-btn {
@@ -234,6 +306,604 @@
         .quick-action-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #2a2a2a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 0;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-header h2 {
+            color: #fff;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-section h3 {
+            color: #fff;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ccc;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #888;
+        }
+
+        .btn-primary, .btn-secondary {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .security-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .security-info p {
+            color: #ccc;
+            margin-bottom: 0.5rem;
+        }
+
+        .security-info p i {
+            color: #667eea;
+            margin-right: 0.5rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .pin-section p {
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        /* Games Section Styles */
+        .games-section {
+            position: relative;
+            z-index: 2;
+            background: rgba(30, 30, 30, 0.9);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .games-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .games-header h2 {
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .games-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-container {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .game-search {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .game-search:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .game-search::placeholder {
+            color: #888;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .game-sort {
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .game-sort:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .random-game-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .random-game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .game-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-card h3 {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .game-card p {
+            color: #ccc;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        /* Game Loader Styles */
+        .game-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(30, 30, 30, 0.9);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        #game-frame {
+            flex: 1;
+            width: 100%;
+            border: none;
+        }
+
+        /* Settings Modal Styles */
+        .settings-modal-content {
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .settings-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #ccc;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .color-settings {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .color-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .color-group label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .color-input {
+            width: 100%;
+            height: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .setting-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .toggle-setting {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toggle-setting label {
+            color: #ccc;
+            margin: 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .text-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .preset-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preset-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+        }
+
+        .shortcut-slot {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .shortcut-slot h4 {
+            color: #fff;
+            margin-bottom: 1rem;
+        }
+
+        .key-combo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .key-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ccc;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .key-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .key-btn.active {
+            background: #667eea;
+            color: #fff;
+            border-color: #667eea;
+        }
+
+        .action-select {
+            padding: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 0.9rem;
+            min-width: 150px;
+        }
+
+        .key-combo span {
+            color: #ccc;
+            font-weight: bold;
         }
 
         @media (max-width: 768px) {
@@ -259,11 +929,23 @@
                 max-width: 300px;
                 justify-content: center;
             }
+
+            .modal-content {
+                width: 95%;
+                margin: 1rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <div class="main-container">
+        <!-- Interactive Background Particles -->
+        <div class="particles" id="particles"></div>
+        
         <!-- User Info Section -->
         <div class="user-info">
             <div class="user-avatar">
@@ -274,39 +956,39 @@
             <button class="logout-btn" onclick="logout()">
                 <i class="fas fa-sign-out-alt"></i>
                 Logout
-            </button>
+          </button>
         </div>
 
         <!-- Stats Section -->
         <div class="stats-section">
-            <h3 style="text-align: center; margin-bottom: 1.5rem;">Your Security Dashboard</h3>
+            <h3 style="text-align: center; margin-bottom: 1.5rem;">Portal Status</h3>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <div class="stat-number">100%</div>
-                    <div class="stat-label">Secure</div>
-                </div>
+                    <div class="stat-number">Online</div>
+                    <div class="stat-label">Status</div>
+              </div>
                 <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Protected</div>
-                </div>
+                    <div class="stat-number">Active</div>
+                    <div class="stat-label">Session</div>
+            </div>
                 <div class="stat-item">
-                    <div class="stat-number">0</div>
-                    <div class="stat-label">Threats</div>
-                </div>
+                    <div class="stat-number">Ready</div>
+                    <div class="stat-label">Services</div>
+        </div>
                 <div class="stat-item">
-                    <div class="stat-number">A+</div>
-                    <div class="stat-label">Rating</div>
-                </div>
+                    <div class="stat-number">✓</div>
+                    <div class="stat-label">Connected</div>
+              </div>
             </div>
         </div>
 
         <!-- Main Header -->
         <div class="main-header">
             <div class="main-logo">
-                <i class="fas fa-shield-alt"></i>
-            </div>
+                <i class="fas fa-cube"></i>
+      </div>
             <h1 class="main-title">Main Portal</h1>
-            <p class="main-subtitle">Access your secure tools and resources</p>
+            <p class="main-subtitle">Welcome to your dashboard</p>
         </div>
 
         <!-- Dashboard Grid -->
@@ -315,8 +997,8 @@
                 <div class="card-icon">
                     <i class="fas fa-gamepad"></i>
                 </div>
-                <h3 class="card-title">Games Collection</h3>
-                <p class="card-description">Access our curated collection of secure, educational games and entertainment options.</p>
+                <h3 class="card-title">Games</h3>
+                <p class="card-description">Access the games collection and entertainment options.</p>
                 <button class="card-button" onclick="openGames()">
                     <i class="fas fa-play"></i>
                     Play Games
@@ -328,60 +1010,53 @@
                     <i class="fas fa-cog"></i>
                 </div>
                 <h3 class="card-title">Settings</h3>
-                <p class="card-description">Customize your experience with privacy settings, preferences, and security options.</p>
+                <p class="card-description">Configure your preferences and customize your experience.</p>
                 <button class="card-button" onclick="openSettings()">
                     <i class="fas fa-sliders-h"></i>
                     Configure
                 </button>
             </div>
+        </div>
 
-            <div class="dashboard-card">
-                <div class="card-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <h3 class="card-title">Analytics</h3>
-                <p class="card-description">View your security metrics, activity logs, and performance statistics.</p>
-                <button class="card-button" onclick="openAnalytics()">
-                    <i class="fas fa-chart-bar"></i>
-                    View Reports
+        <!-- Games Section (Hidden by default) -->
+        <div class="games-section" id="games-section" style="display: none;">
+            <div class="games-header">
+                <h2><i class="fas fa-gamepad"></i> Games Collection</h2>
+                <button class="back-btn" onclick="closeGames()">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
                 </button>
             </div>
-
-            <div class="dashboard-card">
-                <div class="card-icon">
-                    <i class="fas fa-book"></i>
+            
+            <div class="games-controls">
+                <div class="search-container">
+                    <input type="text" id="game-search" placeholder="Search games..." class="game-search">
+                    <i class="fas fa-search search-icon"></i>
                 </div>
-                <h3 class="card-title">Resources</h3>
-                <p class="card-description">Access educational materials, guides, and best practices for online safety.</p>
-                <button class="card-button" onclick="openResources()">
-                    <i class="fas fa-graduation-cap"></i>
-                    Learn More
+                <select id="game-sort" class="game-sort">
+                    <option value="alphabetical">Alphabetical</option>
+                    <option value="reverse">Reverse Alphabetical</option>
+                </select>
+                <button class="random-game-btn" onclick="randomGame()">
+                    <i class="fas fa-random"></i> Random Game
                 </button>
             </div>
+            
+            <div class="games-grid" id="games-grid">
+                <!-- Games will be loaded here -->
+            </div>
+        </div>
 
-            <div class="dashboard-card">
-                <div class="card-icon">
-                    <i class="fas fa-headset"></i>
-                </div>
-                <h3 class="card-title">Support</h3>
-                <p class="card-description">Get help from our support team or access our knowledge base.</p>
-                <button class="card-button" onclick="openSupport()">
-                    <i class="fas fa-question-circle"></i>
-                    Get Help
+        <!-- Game Loader (Hidden by default) -->
+        <div class="game-loader" id="game-loader" style="display: none;">
+            <div class="game-header">
+                <button class="back-btn" onclick="closeGame()">
+                    <i class="fas fa-arrow-left"></i> Back to Games
+                </button>
+                <button class="refresh-btn" onclick="refreshGame()">
+                    <i class="fas fa-refresh"></i> Refresh
                 </button>
             </div>
-
-            <div class="dashboard-card">
-                <div class="card-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h3 class="card-title">Community</h3>
-                <p class="card-description">Connect with other users and share security tips and experiences.</p>
-                <button class="card-button" onclick="openCommunity()">
-                    <i class="fas fa-comments"></i>
-                    Join Discussion
-                </button>
-            </div>
+            <iframe id="game-frame" src="" frameborder="0"></iframe>
         </div>
 
         <!-- Quick Actions -->
@@ -401,6 +1076,266 @@
         </div>
     </div>
 
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content settings-modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-cog"></i> Settings</h2>
+                <button class="close-btn" onclick="closeSettings()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-tabs">
+                    <button class="tab-btn active" onclick="switchTab('account')">Account</button>
+                    <button class="tab-btn" onclick="switchTab('appearance')">Appearance</button>
+                    <button class="tab-btn" onclick="switchTab('privacy')">Privacy</button>
+                    <button class="tab-btn" onclick="switchTab('shortcuts')">Shortcuts</button>
+                </div>
+
+                <!-- Account Tab -->
+                <div id="account-tab" class="tab-content active">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-key"></i> Change Password</h3>
+                        <form id="password-form">
+                            <div class="form-group">
+                                <label for="current-password">Current Password</label>
+                                <input type="password" id="current-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="new-password">New Password</label>
+                                <input type="password" id="new-password" required minlength="6">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm New Password</label>
+                                <input type="password" id="confirm-password" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn-primary">
+                                <i class="fas fa-save"></i> Update Password
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3><i class="fas fa-shield-alt"></i> Browser Security</h3>
+                        <div class="security-info">
+                            <p><i class="fas fa-info-circle"></i> Your account is bound to this browser for security.</p>
+                            <p><strong>Browser ID:</strong> <span id="browser-id"></span></p>
+                            <button class="btn-secondary" onclick="unbindBrowser()">
+                                <i class="fas fa-unlink"></i> Unbind Browser
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appearance Tab -->
+                <div id="appearance-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-palette"></i> Custom Theme</h3>
+                        <p>Customize the appearance of your portal (changes apply on refresh)</p>
+                        
+                        <div class="color-settings">
+                            <div class="color-group">
+                                <label for="bg-color">Background Color:</label>
+                                <input type="color" id="bg-color" value="#1a1a1a" class="color-input">
+                            </div>
+                            <div class="color-group">
+                                <label for="card-color">Card Color:</label>
+                                <input type="color" id="card-color" value="#1e1e1e" class="color-input">
+                            </div>
+                            <div class="color-group">
+                                <label for="accent-color">Accent Color:</label>
+                                <input type="color" id="accent-color" value="#667eea" class="color-input">
+                            </div>
+                            <div class="color-group">
+                                <label for="text-color">Text Color:</label>
+                                <input type="color" id="text-color" value="#ffffff" class="color-input">
+                            </div>
+                            <div class="color-group">
+                                <label for="secondary-text">Secondary Text:</label>
+                                <input type="color" id="secondary-text" value="#cccccc" class="color-input">
+                            </div>
+                        </div>
+                        
+                        <div class="setting-actions">
+                            <button class="btn-primary" onclick="saveColorChanges()">
+                                <i class="fas fa-save"></i> Save Theme
+                            </button>
+                            <button class="btn-secondary" onclick="restoreColorChanges()">
+                                <i class="fas fa-undo"></i> Restore Defaults
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-eye"></i> Background Effects</h3>
+                        <div class="toggle-setting">
+                            <label for="background-effects">Enable Background Particles:</label>
+                            <label class="switch">
+                                <input type="checkbox" id="background-effects" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Tab -->
+                <div id="privacy-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-mask"></i> Cloak Settings</h3>
+                        <p>Hide the site from browser history and make it appear as a different site</p>
+                        
+                        <div class="toggle-setting">
+                            <label for="cloak-enabled">Enable Cloak:</label>
+                            <label class="switch">
+                                <input type="checkbox" id="cloak-enabled">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="cloak-url">Cloak URL:</label>
+                            <input type="url" id="cloak-url" placeholder="https://classroom.google.com" class="text-input">
+                            <button class="btn-primary" onclick="updateCloakUrl()">Apply</button>
+                        </div>
+                        
+                        <div class="preset-section">
+                            <h4>Quick Presets:</h4>
+                            <select id="cloak-presets" class="preset-select">
+                                <option value="">Select a preset...</option>
+                                <option value="https://classroom.google.com">Google Classroom</option>
+                                <option value="https://drive.google.com">Google Drive</option>
+                                <option value="https://mail.google.com">Gmail</option>
+                                <option value="https://canvas.instructure.com">Canvas</option>
+                            </select>
+                            <button class="btn-primary" onclick="applyCloakPreset()">Apply Preset</button>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3><i class="fas fa-tag"></i> Mask Settings</h3>
+                        <p>Change the site title and icon in your browser tab</p>
+                        
+                        <div class="toggle-setting">
+                            <label for="mask-enabled">Enable Mask:</label>
+                            <label class="switch">
+                                <input type="checkbox" id="mask-enabled">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mask-title">Mask Title:</label>
+                            <input type="text" id="mask-title" placeholder="Home" class="text-input">
+                            <button class="btn-primary" onclick="updateMaskTitle()">Apply</button>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="mask-icon">Mask Icon URL:</label>
+                            <input type="url" id="mask-icon" placeholder="https://ssl.gstatic.com/classroom/ic_product_classroom_32.png" class="text-input">
+                            <button class="btn-primary" onclick="updateMaskIcon()">Apply</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Shortcuts Tab -->
+                <div id="shortcuts-tab" class="tab-content">
+                    <div class="settings-section">
+                        <h3><i class="fas fa-keyboard"></i> Keyboard Shortcuts</h3>
+                        <p>Set up custom keyboard shortcuts for quick actions</p>
+                        
+                        <div class="shortcut-slot">
+                            <h4>Shortcut 1</h4>
+                            <div class="key-combo">
+                                <button class="key-btn" data-slot="1" data-key="1">Set Key</button>
+                                <span>+</span>
+                                <button class="key-btn" data-slot="1" data-key="2">Set Key</button>
+                                <span>+</span>
+                                <button class="key-btn" data-slot="1" data-key="3">Set Key (Optional)</button>
+                                <span>=</span>
+                                <select class="action-select" data-slot="1">
+                                    <option value="">Select action...</option>
+                                    <option value="returnHome()">Return to Home</option>
+                                    <option value="openGames()">Open Games</option>
+                                    <option value="openSettings()">Open Settings</option>
+                                    <option value="toggleMute()">Toggle Mute</option>
+                                    <option value="randomGame()">Random Game</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="shortcut-slot">
+                            <h4>Shortcut 2</h4>
+                            <div class="key-combo">
+                                <button class="key-btn" data-slot="2" data-key="1">Set Key</button>
+                                <span>+</span>
+                                <button class="key-btn" data-slot="2" data-key="2">Set Key</button>
+                                <span>+</span>
+                                <button class="key-btn" data-slot="2" data-key="3">Set Key (Optional)</button>
+                                <span>=</span>
+                                <select class="action-select" data-slot="2">
+                                    <option value="">Select action...</option>
+                                    <option value="returnHome()">Return to Home</option>
+                                    <option value="openGames()">Open Games</option>
+                                    <option value="openSettings()">Open Settings</option>
+                                    <option value="toggleMute()">Toggle Mute</option>
+                                    <option value="randomGame()">Random Game</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="shortcut-slot">
+                            <h4>Shortcut 3</h4>
+                            <div class="key-combo">
+                                <button class="key-btn" data-slot="3" data-key="1">Set Key</button>
+                                <span>+</span>
+                                <button class="key-btn" data-slot="3" data-key="2">Set Key</button>
+                                <span>+</span>
+                                <button class="key-btn" data-slot="3" data-key="3">Set Key (Optional)</button>
+                                <span>=</span>
+                                <select class="action-select" data-slot="3">
+                                    <option value="">Select action...</option>
+                                    <option value="returnHome()">Return to Home</option>
+                                    <option value="openGames()">Open Games</option>
+                                    <option value="openSettings()">Open Settings</option>
+                                    <option value="toggleMute()">Toggle Mute</option>
+                                    <option value="randomGame()">Random Game</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unbind PIN Modal -->
+    <div id="unbind-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-lock"></i> Browser Unbind</h2>
+            </div>
+            <div class="modal-body">
+                <div class="pin-section">
+                    <p>To unbind your account from the previous browser, please enter the security PIN:</p>
+                    <div class="form-group">
+                        <label for="unbind-pin">Security PIN</label>
+                        <input type="text" id="unbind-pin" placeholder="Enter PIN" maxlength="5">
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn-primary" onclick="verifyUnbindPin()">
+                            <i class="fas fa-check"></i> Verify PIN
+                        </button>
+                        <button class="btn-secondary" onclick="closeUnbindModal()">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Include original scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+    <script src="js/config.js"></script>
     <script>
         // Check if user is logged in
         document.addEventListener('DOMContentLoaded', function() {
@@ -411,6 +1346,12 @@
             if (!sessionId) {
                 window.location.href = 'login.html';
                 return;
+            }
+
+            // Check browser binding
+            generateBrowserId();
+            if (!checkBrowserBinding()) {
+                return; // Stop execution if browser binding check fails
             }
 
             // Update user info
@@ -432,15 +1373,455 @@
                     card.style.transform = 'translateY(0)';
                 }, index * 100);
             });
+
+            // Password change form
+            document.getElementById('password-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                changePassword();
+            });
+
+            // Create interactive particles
+            createParticles();
         });
+
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // Random animation delay
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
+                // Random size
+                const size = Math.random() * 3 + 1;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
 
         // Dashboard functions
         function openGames() {
-            showNotification('Games section coming soon!', 'info');
+            document.getElementById('games-section').style.display = 'block';
+            document.querySelector('.dashboard-grid').style.display = 'none';
+            document.querySelector('.quick-actions').style.display = 'none';
+            loadGames();
+        }
+
+        function closeGames() {
+            document.getElementById('games-section').style.display = 'none';
+            document.querySelector('.dashboard-grid').style.display = 'grid';
+            document.querySelector('.quick-actions').style.display = 'flex';
+        }
+
+        function loadGames() {
+            const gamesGrid = document.getElementById('games-grid');
+            gamesGrid.innerHTML = '';
+
+            // Get games from config
+            const games = json.games;
+            const gameNames = Object.keys(games);
+
+            gameNames.forEach(gameName => {
+                const game = games[gameName];
+                const gameCard = document.createElement('div');
+                gameCard.className = 'game-card';
+                gameCard.onclick = () => openGame(gameName, game.path);
+                
+                gameCard.innerHTML = `
+                    <h3>${gameName}</h3>
+                    <p>Click to play</p>
+                `;
+                
+                gamesGrid.appendChild(gameCard);
+            });
+
+            // Add search functionality
+            document.getElementById('game-search').addEventListener('input', filterGames);
+            document.getElementById('game-sort').addEventListener('change', sortGames);
+        }
+
+        function filterGames() {
+            const searchTerm = document.getElementById('game-search').value.toLowerCase();
+            const gameCards = document.querySelectorAll('.game-card');
+            
+            gameCards.forEach(card => {
+                const gameName = card.querySelector('h3').textContent.toLowerCase();
+                if (gameName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function sortGames() {
+            const sortBy = document.getElementById('game-sort').value;
+            const gamesGrid = document.getElementById('games-grid');
+            const gameCards = Array.from(gamesGrid.querySelectorAll('.game-card'));
+            
+            gameCards.sort((a, b) => {
+                const nameA = a.querySelector('h3').textContent;
+                const nameB = b.querySelector('h3').textContent;
+                
+                if (sortBy === 'alphabetical') {
+                    return nameA.localeCompare(nameB);
+                } else {
+                    return nameB.localeCompare(nameA);
+                }
+            });
+            
+            gameCards.forEach(card => gamesGrid.appendChild(card));
+        }
+
+        function randomGame() {
+            const gameCards = document.querySelectorAll('.game-card');
+            const visibleCards = Array.from(gameCards).filter(card => card.style.display !== 'none');
+            
+            if (visibleCards.length > 0) {
+                const randomCard = visibleCards[Math.floor(Math.random() * visibleCards.length)];
+                randomCard.click();
+            }
+        }
+
+        function openGame(gameName, gamePath) {
+            document.getElementById('game-loader').style.display = 'flex';
+            document.getElementById('game-frame').src = `games/${gamePath}/index.html`;
+            document.title = `${gameName} - GE Sites`;
+        }
+
+        function closeGame() {
+            document.getElementById('game-loader').style.display = 'none';
+            document.getElementById('game-frame').src = '';
+            document.title = 'Main Portal - GE Sites';
+        }
+
+        function refreshGame() {
+            const iframe = document.getElementById('game-frame');
+            iframe.src = iframe.src;
+        }
+
+        // Settings functionality
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Color theme functionality
+        function saveColorChanges() {
+            const colors = {
+                bg: document.getElementById('bg-color').value,
+                card: document.getElementById('card-color').value,
+                accent: document.getElementById('accent-color').value,
+                text: document.getElementById('text-color').value,
+                secondary: document.getElementById('secondary-text').value
+            };
+            
+            localStorage.setItem('customTheme', JSON.stringify(colors));
+            showNotification('Theme saved! Refresh to apply changes.', 'success');
+        }
+
+        function restoreColorChanges() {
+            const defaultColors = {
+                bg: '#1a1a1a',
+                card: '#1e1e1e',
+                accent: '#667eea',
+                text: '#ffffff',
+                secondary: '#cccccc'
+            };
+            
+            document.getElementById('bg-color').value = defaultColors.bg;
+            document.getElementById('card-color').value = defaultColors.card;
+            document.getElementById('accent-color').value = defaultColors.accent;
+            document.getElementById('text-color').value = defaultColors.text;
+            document.getElementById('secondary-text').value = defaultColors.secondary;
+            
+            localStorage.removeItem('customTheme');
+            showNotification('Theme restored to defaults!', 'info');
+        }
+
+        // Cloak functionality
+        function updateCloakUrl() {
+            const url = document.getElementById('cloak-url').value;
+            if (url) {
+                localStorage.setItem('cloakUrl', url);
+                showNotification('Cloak URL updated!', 'success');
+            }
+        }
+
+        function applyCloakPreset() {
+            const preset = document.getElementById('cloak-presets').value;
+            if (preset) {
+                document.getElementById('cloak-url').value = preset;
+                updateCloakUrl();
+            }
+        }
+
+        // Mask functionality
+        function updateMaskTitle() {
+            const title = document.getElementById('mask-title').value;
+            if (title) {
+                localStorage.setItem('maskTitle', title);
+                showNotification('Mask title updated!', 'success');
+            }
+        }
+
+        function updateMaskIcon() {
+            const icon = document.getElementById('mask-icon').value;
+            if (icon) {
+                localStorage.setItem('maskIcon', icon);
+                showNotification('Mask icon updated!', 'success');
+            }
+        }
+
+        // Shortcuts functionality
+        let keyBindings = {};
+        let isRecording = false;
+        let currentSlot = null;
+        let currentKey = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved shortcuts
+            const savedShortcuts = localStorage.getItem('keyBindings');
+            if (savedShortcuts) {
+                keyBindings = JSON.parse(savedShortcuts);
+                updateShortcutDisplay();
+            }
+
+            // Add event listeners for key recording
+            document.querySelectorAll('.key-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (isRecording) return;
+                    
+                    currentSlot = this.dataset.slot;
+                    currentKey = this.dataset.key;
+                    isRecording = true;
+                    
+                    this.textContent = 'Press a key...';
+                    this.classList.add('active');
+                });
+            });
+
+            // Listen for key presses
+            document.addEventListener('keydown', function(e) {
+                if (isRecording && currentSlot && currentKey) {
+                    e.preventDefault();
+                    
+                    const key = e.key;
+                    const keyCode = e.code;
+                    
+                    // Store the key binding
+                    if (!keyBindings[currentSlot]) {
+                        keyBindings[currentSlot] = {};
+                    }
+                    keyBindings[currentSlot][currentKey] = { key, code: keyCode };
+                    
+                    // Update display
+                    const btn = document.querySelector(`[data-slot="${currentSlot}"][data-key="${currentKey}"]`);
+                    btn.textContent = key;
+                    btn.classList.remove('active');
+                    
+                    // Save to localStorage
+                    localStorage.setItem('keyBindings', JSON.stringify(keyBindings));
+                    
+                    // Reset recording state
+                    isRecording = false;
+                    currentSlot = null;
+                    currentKey = null;
+                    
+                    showNotification('Key binding saved!', 'success');
+                }
+            });
+
+            // Listen for shortcut execution
+            document.addEventListener('keydown', function(e) {
+                const pressedCombo = getPressedCombo();
+                
+                // Check each slot for matching key combination
+                Object.keys(keyBindings).forEach(slot => {
+                    const binding = keyBindings[slot];
+                    const action = document.querySelector(`[data-slot="${slot}"]`).value;
+                    
+                    if (action && matchesBinding(pressedCombo, binding)) {
+                        e.preventDefault();
+                        executeAction(action);
+                    }
+                });
+            });
+        });
+
+        function getPressedCombo() {
+            const combo = [];
+            if (e.ctrlKey) combo.push('Control');
+            if (e.shiftKey) combo.push('Shift');
+            if (e.altKey) combo.push('Alt');
+            combo.push(e.key);
+            return combo;
+        }
+
+        function matchesBinding(pressed, binding) {
+            const bindingKeys = Object.values(binding).map(b => b.key);
+            return bindingKeys.every(key => pressed.includes(key));
+        }
+
+        function executeAction(action) {
+            if (action === 'returnHome()') {
+                closeGames();
+                closeSettings();
+            } else if (action === 'openGames()') {
+                openGames();
+            } else if (action === 'openSettings()') {
+                openSettings();
+            } else if (action === 'toggleMute()') {
+                toggleMute();
+            } else if (action === 'randomGame()') {
+                randomGame();
+            }
+        }
+
+        function updateShortcutDisplay() {
+            Object.keys(keyBindings).forEach(slot => {
+                const binding = keyBindings[slot];
+                Object.keys(binding).forEach(keyNum => {
+                    const btn = document.querySelector(`[data-slot="${slot}"][data-key="${keyNum}"]`);
+                    if (btn) {
+                        btn.textContent = binding[keyNum].key;
+                    }
+                });
+            });
+        }
+
+        function toggleMute() {
+            // Toggle audio mute functionality
+            const audioElements = document.querySelectorAll('audio, video');
+            audioElements.forEach(element => {
+                element.muted = !element.muted;
+            });
+            showNotification('Audio toggled', 'info');
         }
 
         function openSettings() {
-            showNotification('Settings panel coming soon!', 'info');
+            document.getElementById('settings-modal').style.display = 'block';
+            generateBrowserId();
+        }
+
+        function closeSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        function generateBrowserId() {
+            // Generate a unique browser ID based on various browser characteristics
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('Browser fingerprint', 2, 2);
+            
+            const fingerprint = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                new Date().getTimezoneOffset(),
+                navigator.platform,
+                canvas.toDataURL()
+            ].join('|');
+            
+            // Create a simple hash
+            let hash = 0;
+            for (let i = 0; i < fingerprint.length; i++) {
+                const char = fingerprint.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            
+            const browserId = Math.abs(hash).toString(16).substring(0, 8);
+            document.getElementById('browser-id').textContent = browserId;
+            
+            // Store browser ID
+            localStorage.setItem('browserId', browserId);
+        }
+
+        function checkBrowserBinding() {
+            const storedBrowserId = localStorage.getItem('browserId');
+            const currentBrowserId = document.getElementById('browser-id').textContent;
+            
+            if (storedBrowserId && storedBrowserId !== currentBrowserId) {
+                // Browser mismatch - show unbind modal
+                document.getElementById('unbind-modal').style.display = 'block';
+                return false;
+            }
+            return true;
+        }
+
+        function unbindBrowser() {
+            document.getElementById('unbind-modal').style.display = 'block';
+        }
+
+        function closeUnbindModal() {
+            document.getElementById('unbind-modal').style.display = 'none';
+        }
+
+        function verifyUnbindPin() {
+            const pin = document.getElementById('unbind-pin').value;
+            if (pin === 'A2425') {
+                // PIN correct - unbind and rebind
+                localStorage.removeItem('browserId');
+                generateBrowserId();
+                closeUnbindModal();
+                showNotification('Browser unbound successfully!', 'success');
+            } else {
+                showNotification('Invalid PIN!', 'error');
+            }
+        }
+
+        function changePassword() {
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Validation
+            if (newPassword !== confirmPassword) {
+                showNotification('New passwords do not match!', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showNotification('New password must be at least 6 characters long!', 'error');
+                return;
+            }
+
+            // Simulate password change (in real app, this would call an API)
+            showNotification('Password changed successfully!', 'success');
+            
+            // Clear form
+            document.getElementById('password-form').reset();
+            
+            // Close modal after a delay
+            setTimeout(() => {
+                closeSettings();
+            }, 1500);
         }
 
         function openAnalytics() {
