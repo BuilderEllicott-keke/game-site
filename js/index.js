@@ -3,18 +3,9 @@ let currentMenu = $('.homepage');
 $('.column button .card').on('click', function () {
     let nextMenu = this.getAttribute('data');
 
-    if (nextMenu === 'proxy') {
-        if (!config['proxy']) {
-            $('#disabled').showModal();
-            return;
-        }
-        $('#everything-else').fadeOut(300, () => {
-            $('#page-loader').fadeIn(200);
-            $('#page-loader iframe').attr('src', config['proxyPath'] || '/proxy');
-            $('#page-loader iframe')[0].focus();
-        });
-        currentMenu = $('#page-loader');
-        inGame = !preferences.background; // if background is disabled (false) then inGame is set to to true turning off the background
+    if (nextMenu === 'security') {
+        // Security center functionality
+        showNotification('Security Center coming soon!', 'info');
         return;
     }
 

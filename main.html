@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Portal - GE Sites</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .main-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem;
+        }
+
+        .main-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .main-logo {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .main-logo i {
+            font-size: 3rem;
+            color: white;
+        }
+
+        .main-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .main-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .card-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .card-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            color: white;
+            text-align: center;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .user-avatar i {
+            font-size: 1.5rem;
+        }
+
+        .user-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .user-role {
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quick-action-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .quick-action-btn {
+                width: 100%;
+                max-width: 300px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- User Info Section -->
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-name" id="user-name">Welcome, User</div>
+            <div class="user-role" id="user-role">Member</div>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </button>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="stats-section">
+            <h3 style="text-align: center; margin-bottom: 1.5rem;">Your Security Dashboard</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Secure</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Protected</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Threats</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">A+</div>
+                    <div class="stat-label">Rating</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Header -->
+        <div class="main-header">
+            <div class="main-logo">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h1 class="main-title">Main Portal</h1>
+            <p class="main-subtitle">Access your secure tools and resources</p>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-gamepad"></i>
+                </div>
+                <h3 class="card-title">Games Collection</h3>
+                <p class="card-description">Access our curated collection of secure, educational games and entertainment options.</p>
+                <button class="card-button" onclick="openGames()">
+                    <i class="fas fa-play"></i>
+                    Play Games
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <h3 class="card-title">Settings</h3>
+                <p class="card-description">Customize your experience with privacy settings, preferences, and security options.</p>
+                <button class="card-button" onclick="openSettings()">
+                    <i class="fas fa-sliders-h"></i>
+                    Configure
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="card-title">Analytics</h3>
+                <p class="card-description">View your security metrics, activity logs, and performance statistics.</p>
+                <button class="card-button" onclick="openAnalytics()">
+                    <i class="fas fa-chart-bar"></i>
+                    View Reports
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-book"></i>
+                </div>
+                <h3 class="card-title">Resources</h3>
+                <p class="card-description">Access educational materials, guides, and best practices for online safety.</p>
+                <button class="card-button" onclick="openResources()">
+                    <i class="fas fa-graduation-cap"></i>
+                    Learn More
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <h3 class="card-title">Support</h3>
+                <p class="card-description">Get help from our support team or access our knowledge base.</p>
+                <button class="card-button" onclick="openSupport()">
+                    <i class="fas fa-question-circle"></i>
+                    Get Help
+                </button>
+            </div>
+
+            <div class="dashboard-card">
+                <div class="card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3 class="card-title">Community</h3>
+                <p class="card-description">Connect with other users and share security tips and experiences.</p>
+                <button class="card-button" onclick="openCommunity()">
+                    <i class="fas fa-comments"></i>
+                    Join Discussion
+                </button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <button class="quick-action-btn" onclick="refreshDashboard()">
+                <i class="fas fa-sync-alt"></i>
+                Refresh
+            </button>
+            <button class="quick-action-btn" onclick="exportData()">
+                <i class="fas fa-download"></i>
+                Export Data
+            </button>
+            <button class="quick-action-btn" onclick="openHelp()">
+                <i class="fas fa-question"></i>
+                Help
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const sessionId = localStorage.getItem('sessionId');
+            const userRole = localStorage.getItem('userRole');
+            const username = localStorage.getItem('username');
+
+            if (!sessionId) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Update user info
+            if (username) {
+                document.getElementById('user-name').textContent = `Welcome, ${username}`;
+            }
+            if (userRole) {
+                document.getElementById('user-role').textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+            }
+
+            // Add loading animation
+            const cards = document.querySelectorAll('.dashboard-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // Dashboard functions
+        function openGames() {
+            showNotification('Games section coming soon!', 'info');
+        }
+
+        function openSettings() {
+            showNotification('Settings panel coming soon!', 'info');
+        }
+
+        function openAnalytics() {
+            showNotification('Analytics dashboard coming soon!', 'info');
+        }
+
+        function openResources() {
+            showNotification('Resources section coming soon!', 'info');
+        }
+
+        function openSupport() {
+            showNotification('Support center coming soon!', 'info');
+        }
+
+        function openCommunity() {
+            showNotification('Community features coming soon!', 'info');
+        }
+
+        function refreshDashboard() {
+            showNotification('Dashboard refreshed!', 'success');
+        }
+
+        function exportData() {
+            showNotification('Data export started!', 'success');
+        }
+
+        function openHelp() {
+            showNotification('Help documentation coming soon!', 'info');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('sessionId');
+                localStorage.removeItem('userRole');
+                localStorage.removeItem('username');
+                window.location.href = 'login.html';
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                color: white;
+                font-weight: 500;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                max-width: 300px;
+            `;
+
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                info: '#3b82f6',
+                warning: '#f59e0b'
+            };
+
+            notification.style.background = colors[type] || colors.info;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }, 3000);
+        }
+
+        // Add CSS for notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            @keyframes slideOut {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

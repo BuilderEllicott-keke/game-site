@@ -14,7 +14,7 @@ function changeLoadingTip() {
 }
 
 changeLoadingTip();
-$('#everything-else, #page-loader, .games, .proxy, .settings, .cloaklaunch').hide();
+$('#everything-else, #page-loader, .games, .security, .settings, .cloaklaunch').hide();
 
 let changeTip = setInterval(() => {
     changeLoadingTip();

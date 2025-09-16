@@ -5,25 +5,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stay Safe Online</title>
+    <title>GE Sites - Online Safety & Security</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Stay Safe Online</h1>
-        <p>Learn how to protect yourself and your information while browsing the internet.</p>
-        <section>
-            <h2>Tips for Staying Safe Online</h2>
-            <ul>
-                <li>Use strong, unique passwords for each account.</li>
-                <li>Avoid clicking on suspicious links or downloading unknown files.</li>
-                <li>Keep your software and antivirus programs up to date.</li>
-                <li>Be cautious of phishing attempts and never share personal information with unknown sources.</li>
-                <li>Use two-factor authentication whenever possible.</li>
-            </ul>
-        </section>
-        <button id="secret-button">Access Secret Website</button>
-    </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-shield-alt"></i>
+                <span>GE Sites</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#resources" class="nav-link">Resources</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="nav-toggle">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">Stay Safe in the Digital World</h1>
+                <p class="hero-subtitle">Protect yourself, your data, and your privacy with our comprehensive online safety resources and tools.</p>
+                <div class="hero-buttons">
+                    <button class="btn btn-primary" id="learn-more">Learn More</button>
+                    <button class="btn btn-secondary" id="get-started">Get Started</button>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="security-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose GE Sites?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-virus"></i>
+                    </div>
+                    <h3>Advanced Protection</h3>
+                    <p>State-of-the-art security measures to keep your data safe from cyber threats and malicious attacks.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-secret"></i>
+                    </div>
+                    <h3>Privacy First</h3>
+                    <p>Your privacy is our priority. We implement strict data protection policies and encryption standards.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Educational Resources</h3>
+                    <p>Learn about online safety through our comprehensive guides, tutorials, and best practices.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <h3>24/7 Support</h3>
+                    <p>Round-the-clock support to help you with any security concerns or questions you may have.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Safety Tips Section -->
+    <section id="resources" class="safety-tips">
+        <div class="container">
+            <h2 class="section-title">Essential Online Safety Tips</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-number">01</div>
+                    <h3>Strong Passwords</h3>
+                    <p>Use unique, complex passwords for each account. Consider using a password manager to generate and store them securely.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-number">02</div>
+                    <h3>Two-Factor Authentication</h3>
+                    <p>Enable 2FA whenever possible to add an extra layer of security to your accounts.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-number">03</div>
+                    <h3>Software Updates</h3>
+                    <p>Keep your operating system, browsers, and applications updated to protect against known vulnerabilities.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-number">04</div>
+                    <h3>Phishing Awareness</h3>
+                    <p>Be cautious of suspicious emails, links, and attachments. Verify the sender before clicking or downloading.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-number">05</div>
+                    <h3>Secure Networks</h3>
+                    <p>Avoid using public Wi-Fi for sensitive activities. Use a VPN when connecting to public networks.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-number">06</div>
+                    <h3>Data Backup</h3>
+                    <p>Regularly backup your important data to secure cloud storage or external devices.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50K+</div>
+                    <div class="stat-label">Users Protected</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Monitoring</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Encrypted</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Secure Your Digital Life?</h2>
+                <p>Join thousands of users who trust GE Sites for their online safety needs.</p>
+                <button class="btn btn-primary btn-large" id="secret-button">Access Secure Portal</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>GE Sites</span>
+                    </div>
+                    <p>Your trusted partner in online safety and security.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#resources">Resources</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Security</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Security Report</a></li>
+                        <li><a href="#">Bug Bounty</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> support@gesites.com</li>
+                        <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt"></i> New York, NY</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 GE Sites. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Secret Button (Hidden) -->
+    <div class="secret-trigger" id="secret-trigger"></div>
+
     <script src="script.js"></script>
 </body>
 </html>

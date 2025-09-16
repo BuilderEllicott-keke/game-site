@@ -991,8 +991,8 @@
         // coming soon
     },
     "config": {
-        "proxy": true, // proxy only works when self-hosted
-        "proxyPath": "https://monkey.nordparrot.ro" // absolute or relative path to proxy; proxy must be set to true for this setting to have any effect.
+        "proxy": false, // proxy functionality disabled
+        "proxyPath": "" // proxy path removed
         // if you are using VioletGG2, all you need to do set proxy to "/proxy.html"
     }
 }
