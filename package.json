@@ -1,23 +1,22 @@
 {
-    "name": "monkeygg2",
-    "version": "1.0.0",
-    "description": "<p align=\"center\"><img src=\"https://raw.githubusercontent.com/MonkeyGG2/monkeygg2.github.io/main/imgs/icon-256-256.png\" height=\"200\"></p>",
-    "homepage": "https://github.com/MonkeyGG2/monkeygg2.github.io#readme",
-    "bugs": {
-        "url": "https://github.com/MonkeyGG2/monkeygg2.github.io/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/MonkeyGG2/monkeygg2.github.io.git"
-    },
-    "license": "WTFPL",
-    "author": "",
-    "type": "module",
-    "main": "add-game-entry.js",
-    "scripts": {
-        "add-game": "node add-game-entry.js"
-    },
-    "dependencies": {
-        "@inquirer/prompts": "^7.5.3"
-    }
+  "name": "netlify-auth-system",
+  "version": "1.0.0",
+  "description": "Authentication system with Supabase and Netlify Functions",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build process needed'",
+    "deploy": "netlify deploy --prod"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "",
+  "license": "MIT"
 }
