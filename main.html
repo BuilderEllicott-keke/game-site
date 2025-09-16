@@ -571,11 +571,29 @@
             color: #fff;
             font-size: 1rem;
             cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+            transition: all 0.3s ease;
         }
 
         .game-sort:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .game-sort:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .game-sort option {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0.5rem;
         }
 
         .random-game-btn {
@@ -847,6 +865,30 @@
             color: #fff;
             font-size: 1rem;
             margin: 0.5rem 0;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1rem;
+            padding-right: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .preset-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .preset-select:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .preset-select option {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0.5rem;
         }
 
         .shortcut-slot {
@@ -899,6 +941,30 @@
             color: #fff;
             font-size: 0.9rem;
             min-width: 150px;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 0.8rem;
+            padding-right: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-select:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .action-select option {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 0.5rem;
         }
 
         .key-combo span {
@@ -1567,7 +1633,9 @@
             const url = document.getElementById('cloak-url').value;
             if (url) {
                 localStorage.setItem('cloakUrl', url);
-                showNotification('Cloak URL updated!', 'success');
+                localStorage.setItem('cloakEnabled', 'true');
+                applyCloak();
+                showNotification('Cloak URL updated and applied!', 'success');
             }
         }
 
@@ -1579,12 +1647,48 @@
             }
         }
 
+        function applyCloak() {
+            const cloakUrl = localStorage.getItem('cloakUrl');
+            const cloakEnabled = localStorage.getItem('cloakEnabled') === 'true';
+            
+            if (cloakEnabled && cloakUrl) {
+                // Change the page title and URL in history
+                document.title = 'Loading...';
+                
+                // Create a fake URL that looks like the cloaked site
+                const fakeUrl = cloakUrl;
+                
+                // Update the browser history
+                if (history.replaceState) {
+                    history.replaceState(null, null, fakeUrl);
+                }
+                
+                // Change the page title to match the cloaked site
+                setTimeout(() => {
+                    const siteName = new URL(cloakUrl).hostname;
+                    document.title = siteName.charAt(0).toUpperCase() + siteName.slice(1);
+                }, 1000);
+                
+                showNotification('Site cloaked successfully!', 'success');
+            }
+        }
+
+        function removeCloak() {
+            localStorage.removeItem('cloakUrl');
+            localStorage.removeItem('cloakEnabled');
+            document.title = 'Main Portal - GE Sites';
+            history.replaceState(null, null, window.location.pathname);
+            showNotification('Cloak removed!', 'info');
+        }
+
         // Mask functionality
         function updateMaskTitle() {
             const title = document.getElementById('mask-title').value;
             if (title) {
                 localStorage.setItem('maskTitle', title);
-                showNotification('Mask title updated!', 'success');
+                localStorage.setItem('maskEnabled', 'true');
+                applyMask();
+                showNotification('Mask title updated and applied!', 'success');
             }
         }
 
@@ -1592,8 +1696,39 @@
             const icon = document.getElementById('mask-icon').value;
             if (icon) {
                 localStorage.setItem('maskIcon', icon);
-                showNotification('Mask icon updated!', 'success');
+                localStorage.setItem('maskEnabled', 'true');
+                applyMask();
+                showNotification('Mask icon updated and applied!', 'success');
             }
+        }
+
+        function applyMask() {
+            const maskTitle = localStorage.getItem('maskTitle');
+            const maskIcon = localStorage.getItem('maskIcon');
+            const maskEnabled = localStorage.getItem('maskEnabled') === 'true';
+            
+            if (maskEnabled) {
+                if (maskTitle) {
+                    document.title = maskTitle;
+                }
+                
+                if (maskIcon) {
+                    // Create or update favicon
+                    let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                    link.type = 'image/x-icon';
+                    link.rel = 'shortcut icon';
+                    link.href = maskIcon;
+                    document.getElementsByTagName('head')[0].appendChild(link);
+                }
+            }
+        }
+
+        function removeMask() {
+            localStorage.removeItem('maskTitle');
+            localStorage.removeItem('maskIcon');
+            localStorage.removeItem('maskEnabled');
+            document.title = 'Main Portal - GE Sites';
+            showNotification('Mask removed!', 'info');
         }
 
         // Shortcuts functionality
@@ -1725,6 +1860,44 @@
         function openSettings() {
             document.getElementById('settings-modal').style.display = 'block';
             generateBrowserId();
+            loadSettings();
+        }
+
+        function loadSettings() {
+            // Load cloak settings
+            const cloakUrl = localStorage.getItem('cloakUrl');
+            const cloakEnabled = localStorage.getItem('cloakEnabled') === 'true';
+            if (cloakUrl) {
+                document.getElementById('cloak-url').value = cloakUrl;
+            }
+            document.getElementById('cloak-enabled').checked = cloakEnabled;
+
+            // Load mask settings
+            const maskTitle = localStorage.getItem('maskTitle');
+            const maskIcon = localStorage.getItem('maskIcon');
+            const maskEnabled = localStorage.getItem('maskEnabled') === 'true';
+            if (maskTitle) {
+                document.getElementById('mask-title').value = maskTitle;
+            }
+            if (maskIcon) {
+                document.getElementById('mask-icon').value = maskIcon;
+            }
+            document.getElementById('mask-enabled').checked = maskEnabled;
+
+            // Load background effects setting
+            const backgroundEffects = localStorage.getItem('backgroundEffects') !== 'false';
+            document.getElementById('background-effects').checked = backgroundEffects;
+
+            // Load custom theme
+            const customTheme = localStorage.getItem('customTheme');
+            if (customTheme) {
+                const colors = JSON.parse(customTheme);
+                document.getElementById('bg-color').value = colors.bg || '#1a1a1a';
+                document.getElementById('card-color').value = colors.card || '#1e1e1e';
+                document.getElementById('accent-color').value = colors.accent || '#667eea';
+                document.getElementById('text-color').value = colors.text || '#ffffff';
+                document.getElementById('secondary-text').value = colors.secondary || '#cccccc';
+            }
         }
 
         function closeSettings() {

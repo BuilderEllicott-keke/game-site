@@ -70,29 +70,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set loading state
     function setLoading(loading) {
         if (loading) {
-            loginButton.disabled = true;
             loadingSpinner.style.display = 'inline-block';
-            buttonText.textContent = 'Signing In...';
+            buttonText.textContent = 'Signing in...';
+            loginButton.disabled = true;
         } else {
-            loginButton.disabled = false;
             loadingSpinner.style.display = 'none';
             buttonText.textContent = 'Sign In';
+            loginButton.disabled = false;
         }
     }
-
-    // Add input animations
-    const inputs = document.querySelectorAll('.form-input');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.classList.add('focused');
-        });
-        
-        input.addEventListener('blur', function() {
-            if (!this.value) {
-                this.parentElement.classList.remove('focused');
-            }
-        });
-    });
 
     // Form submission
     loginForm.addEventListener('submit', function(event) {
@@ -110,99 +96,54 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Simulate a small delay for better UX
         setTimeout(() => {
-            fetch('/.netlify/functions/authenticate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    username, 
-                    password,
-                    action: 'login'
-                }),
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
+            // Mock authentication system
+            const mockUsers = [
+                { username: 'admin', password: 'admin123', role: 'admin', email: 'admin@gesites.com' },
+                { username: 'user', password: 'user123', role: 'user', email: 'user@gesites.com' },
+                { username: 'test', password: 'test123', role: 'user', email: 'test@gesites.com' }
+            ];
 
-                return response.text().then(text => {
-                    console.log('Raw response text:', text);
-                    
-                    if (!text.trim()) {
-                        throw new Error('Empty response from server');
+            const user = mockUsers.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                showSuccess('Login successful! Redirecting...');
+                
+                // Generate a mock session ID
+                const sessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
+                
+                // Store session data
+                localStorage.setItem('sessionId', sessionId);
+                localStorage.setItem('userRole', user.role);
+                localStorage.setItem('username', username);
+                localStorage.setItem('userEmail', user.email);
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    if (user.role === 'admin') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'main.html';
                     }
-                    
-                    try {
-                        return JSON.parse(text);
-                    } catch (parseError) {
-                        console.error('JSON parse error:', parseError);
-                        throw new Error('Invalid JSON response from server');
-                    }
-                });
-            })
-            .then(data => {
-                console.log('Parsed data:', data);
-                
-                if (data.success) {
-                    showSuccess('Login successful! Redirecting...');
-                    
-                    // Store session data
-                    localStorage.setItem('sessionId', data.sessionId);
-                    localStorage.setItem('userRole', data.role);
-                    localStorage.setItem('username', username);
-                    
-                    // Redirect after a short delay
-                    setTimeout(() => {
-                        if (data.role === 'admin') {
-                            window.location.href = 'admin-dashboard.html';
-                        } else {
-                            window.location.href = 'main.html'; // Changed from secret-website.html
-                        }
-                    }, 1500);
-                } else {
-                    showError(data.message || 'Invalid username or password');
-                }
-            })
-            .catch(error => {
-                console.error('Login error:', error);
-                
-                let errorMsg = 'An error occurred during login. Please try again.';
-                
-                if (error.message.includes('Failed to fetch')) {
-                    errorMsg = 'Network error. Please check your connection and try again.';
-                } else if (error.message.includes('Empty response')) {
-                    errorMsg = 'Server returned empty response. Please check your Netlify functions.';
-                } else if (error.message.includes('Invalid JSON')) {
-                    errorMsg = 'Server returned invalid response. Please check server logs.';
-                } else if (error.message.includes('HTTP 401')) {
-                    errorMsg = 'Invalid username or password. Please try again.';
-                } else if (error.message.includes('HTTP 500')) {
-                    errorMsg = 'Server error. Please try again later.';
-                }
-                
-                showError(errorMsg);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+                }, 1500);
+            } else {
+                showError('Invalid username or password');
+            }
+            
+            setLoading(false);
         }, 500);
     });
 
-    // Add enter key support for form submission
+    // Add some visual feedback for form interactions
+    const inputs = document.querySelectorAll('input');
     inputs.forEach(input => {
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                loginForm.dispatchEvent(new Event('submit'));
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            if (!this.value) {
+                this.parentElement.classList.remove('focused');
             }
         });
     });
-
-    // Add focus management
-    const firstInput = document.getElementById('username');
-    if (firstInput) {
-        firstInput.focus();
-    }
 });
