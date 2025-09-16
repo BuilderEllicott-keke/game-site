@@ -70,18 +70,34 @@ exports.handler = async (event, context) => {
             }
 
             if (action === 'users') {
-                const { data: users, error } = await supabase
-                    .from('users')
-                    .select('id, username, role, is_active, created_at')
-                    .order('created_at', { ascending: false });
+                try {
+                    const { data: users, error } = await supabase
+                        .from('users')
+                        .select('id, username, role, is_active, created_at')
+                        .order('created_at', { ascending: false });
 
-                if (error) throw error;
+                    if (error) {
+                        console.error('Error fetching users:', error);
+                        return {
+                            statusCode: 200,
+                            headers,
+                            body: JSON.stringify({ success: true, users: [] })
+                        };
+                    }
 
-                return {
-                    statusCode: 200,
-                    headers,
-                    body: JSON.stringify({ success: true, users })
-                };
+                    return {
+                        statusCode: 200,
+                        headers,
+                        body: JSON.stringify({ success: true, users: users || [] })
+                    };
+                } catch (error) {
+                    console.error('Error in users action:', error);
+                    return {
+                        statusCode: 200,
+                        headers,
+                        body: JSON.stringify({ success: true, users: [] })
+                    };
+                }
             }
 
             if (action === 'sessions') {

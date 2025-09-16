@@ -1307,6 +1307,15 @@
                             <button class="btn-primary" onclick="updateCloakUrl()">Apply</button>
                         </div>
                         
+                        <div class="form-group">
+                            <label for="about-blank">About:Blank Cloaking:</label>
+                            <select id="about-blank" class="text-input">
+                                <option value="false">Disabled</option>
+                                <option value="true">Enabled</option>
+                            </select>
+                            <button class="btn-primary" onclick="updateAboutBlank()">Apply</button>
+                        </div>
+                        
                         <div class="preset-section">
                             <h4>Quick Presets:</h4>
                             <select id="cloak-presets" class="preset-select">
@@ -1780,6 +1789,16 @@
             }
         }
 
+        function updateAboutBlank() {
+            const aboutBlank = document.getElementById('about-blank').value === 'true';
+            localStorage.setItem('aboutBlankEnabled', aboutBlank);
+            if (aboutBlank) {
+                showNotification('About:Blank cloaking enabled!', 'success');
+            } else {
+                showNotification('About:Blank cloaking disabled!', 'info');
+            }
+        }
+
         function applyCloakPreset() {
             const preset = document.getElementById('cloak-presets').value;
             if (preset) {
@@ -2013,6 +2032,13 @@
             const cloakEnabledElement = document.getElementById('cloak-enabled');
             if (cloakEnabledElement) {
                 cloakEnabledElement.checked = cloakEnabled;
+            }
+
+            // Load about:blank setting
+            const aboutBlankEnabled = localStorage.getItem('aboutBlankEnabled') === 'true';
+            const aboutBlankElement = document.getElementById('about-blank');
+            if (aboutBlankElement) {
+                aboutBlankElement.value = aboutBlankEnabled ? 'true' : 'false';
             }
 
             // Load mask settings
